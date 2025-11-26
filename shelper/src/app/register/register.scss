@@ -1,0 +1,83 @@
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.register-card {
+  max-width: 450px;
+  width: 100%;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+
+  mat-card-header {
+    margin-bottom: 24px;
+
+    mat-card-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    mat-card-subtitle {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  mat-card-content {
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.submit-button {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 8px;
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+::ng-deep {
+  .success-snackbar {
+    background-color: #4caf50 !important;
+    color: white !important;
+  }
+
+  .error-snackbar {
+    background-color: #f44336 !important;
+    color: white !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .register-container {
+    padding: 16px;
+  }
+
+  .register-card {
+    padding: 16px;
+
+    mat-card-header {
+      mat-card-title {
+        font-size: 24px;
+      }
+    }
+  }
+}

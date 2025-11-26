@@ -1,0 +1,149 @@
+<mat-toolbar class="top-toolbar">
+  <button mat-icon-button (click)="onBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="toolbar-title">Criar Novo Studyflow</span>
+</mat-toolbar>
+
+<div class="container">
+  <div class="content-wrapper">
+    <mat-card class="main-card">
+      <mat-card-header>
+        <mat-card-title>Novo Studyflow</mat-card-title>
+        <mat-card-subtitle>Crie um novo Studyflow e envie arquivos</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <!-- Studyflow Form -->
+        <form [formGroup]="studyflowForm" (ngSubmit)="onCreateStudyflow()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Título</mat-label>
+            <input
+              matInput
+              formControlName="title"
+              placeholder="Digite o título do studyflow"
+              [disabled]="studyflowCreated">
+            <mat-error *ngIf="studyflowForm.get('title')?.invalid">
+              {{ getErrorMessage('title') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descrição</mat-label>
+            <textarea
+              matInput
+              formControlName="description"
+              placeholder="Descreva o seu studyflow"
+              rows="4"
+              [disabled]="studyflowCreated"></textarea>
+            <mat-error *ngIf="studyflowForm.get('description')?.invalid">
+              {{ getErrorMessage('description') }}
+            </mat-error>
+          </mat-form-field>
+
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            class="submit-btn"
+            [disabled]="isCreating || studyflowCreated">
+            <mat-icon>{{ studyflowCreated ? 'check_circle' : 'save' }}</mat-icon>
+            {{ isCreating ? 'Criando...' : (studyflowCreated ? 'Criado' : 'Criar Studyflow') }}
+          </button>
+        </form>
+
+        <!-- Resources Section - Only shown after 201 response -->
+        <div *ngIf="studyflowCreated">
+          <mat-divider></mat-divider>
+
+          <div class="resources-section">
+            <h3>Enviar Arquivos</h3>
+
+            <input
+              type="file"
+              #fileInput
+              (change)="onFileSelect($event)"
+              multiple
+              accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.png,.jpg,.jpeg"
+              hidden>
+
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="fileInput.click()"
+              [disabled]="isUploading">
+              <mat-icon>add</mat-icon>
+              Selecionar Arquivos
+            </button>
+
+            <!-- Selected Files List -->
+            <div class="files-list" *ngIf="selectedFiles.length > 0">
+              <h4>Arquivos Selecionados ({{ selectedFiles.length }})</h4>
+
+              <mat-list>
+                <mat-list-item *ngFor="let file of selectedFiles; let i = index" class="file-item">
+                  <mat-icon
+                    matListItemIcon
+                    [style.color]="getFileColor(file.filetype)">
+                    {{ getFileIcon(file.filetype) }}
+                  </mat-icon>
+
+                  <div matListItemTitle>{{ file.filename }}</div>
+                  <div matListItemLine class="file-meta">
+                    {{ file.filetype.toUpperCase() }} • {{ file.mime }}
+                  </div>
+
+                  <div matListItemMeta class="file-actions">
+                    <mat-checkbox
+                      [checked]="file.indicator"
+                      (change)="onToggleIndicator(i)"
+                      [disabled]="isUploading"
+                      color="primary">
+                      Indicador
+                    </mat-checkbox>
+                    <button
+                      mat-icon-button
+                      color="warn"
+                      (click)="onRemoveFile(i)"
+                      [disabled]="isUploading">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </mat-list-item>
+              </mat-list>
+
+              <div class="upload-actions">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="onUploadResources()"
+                  [disabled]="isUploading || resourcesUploaded">
+                  <mat-icon>cloud_upload</mat-icon>
+                  {{ isUploading ? 'Enviando...' : (resourcesUploaded ? 'Enviado' : 'Enviar Recursos') }}
+                </button>
+              </div>
+            </div>
+
+            <p class="info-text" *ngIf="selectedFiles.length === 0">
+              Nenhum arquivo selecionado. Clique em "Selecionar Arquivos" para adicionar recursos.
+            </p>
+          </div>
+
+          <div class="generate-section" *ngIf="resourcesUploaded">
+            <mat-divider></mat-divider>
+
+            <button
+              mat-raised-button
+              color="primary"
+              class="generate-btn"
+              (click)="onGenerateQuestions()"
+              [disabled]="isGeneratingQuestions">
+              <mat-icon>quiz</mat-icon>
+              {{ isGeneratingQuestions ? 'Gerando questões...' : 'Gerar questões' }}
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

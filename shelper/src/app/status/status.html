@@ -1,0 +1,185 @@
+<mat-toolbar class="top-toolbar">
+  <button mat-icon-button (click)="onBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="toolbar-title">Análise de Desempenho</span>
+</mat-toolbar>
+
+<!-- Loading State -->
+<div class="loading-container" *ngIf="isLoading">
+  <mat-icon class="loading-icon">analytics</mat-icon>
+  <h2>Carregando análises...</h2>
+</div>
+
+<!-- Empty State - Nenhum dado -->
+<div class="empty-state" *ngIf="!isLoading && !analytics">
+  <mat-icon>analytics</mat-icon>
+  <h2>Nenhum dado disponível</h2>
+  <p>Não foi possível carregar as estatísticas deste studyflow.</p>
+  <button mat-raised-button color="primary" (click)="onBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Voltar para Home
+  </button>
+</div>
+
+<!-- Container Principal -->
+<div class="analytics-container" *ngIf="!isLoading && analytics">
+
+  <!-- Empty State - Nenhuma questão respondida -->
+  <div class="empty-state" *ngIf="!hasAnyAnsweredQuestions()">
+    <mat-icon>quiz</mat-icon>
+    <h2>Nenhuma questão respondida ainda</h2>
+    <p>Comece a responder questões para ver suas estatísticas e acompanhar seu progresso!</p>
+    <button mat-raised-button color="primary" (click)="onBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Voltar para Home
+    </button>
+  </div>
+
+  <!-- Conteúdo com estatísticas (só aparece se tiver respostas) -->
+  <ng-container *ngIf="hasAnyAnsweredQuestions()">
+    <!-- Cards de Estatísticas Gerais -->
+    <div class="stats-grid">
+      <mat-card class="stat-card correct-card">
+        <div class="stat-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <div class="stat-content">
+          <h2>{{ totalCorrect }}</h2>
+          <p>Questões Corretas</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card incorrect-card">
+        <div class="stat-icon">
+          <mat-icon>cancel</mat-icon>
+        </div>
+        <div class="stat-content">
+          <h2>{{ totalIncorrect }}</h2>
+          <p>Questões Erradas</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card time-card">
+        <div class="stat-icon">
+          <mat-icon>schedule</mat-icon>
+        </div>
+        <div class="stat-content">
+          <h2>{{ formattedTime }}</h2>
+          <p>Tempo Total</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card total-card">
+        <div class="stat-icon">
+          <mat-icon>quiz</mat-icon>
+        </div>
+        <div class="stat-content">
+          <h2>{{ totalAnswered }}</h2>
+          <p>Total Respondidas</p>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Gráfico de Barras por Tópico -->
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>bar_chart</mat-icon>
+          Desempenho por Tópico
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <div class="bar-chart">
+            <div
+              *ngFor="let indicator of sortedIndicators"
+              class="bar-item"
+              [class.no-data]="indicator.answeredCount === 0">
+
+              <div class="bar-label">
+                <span class="topic-name">{{ indicator.indicatorTag }}</span>
+                <span class="topic-stats">
+                  {{ indicator.correctCount }}/{{ indicator.answeredCount }}
+                </span>
+              </div>
+
+              <div class="bar-wrapper">
+                <div
+                  class="bar-fill"
+                  [style.width.%]="indicator.percentage"
+                  [style.background-color]="getPerformanceColor(indicator.percentage)">
+                </div>
+                <span class="bar-percentage" *ngIf="indicator.answeredCount > 0">
+                  {{ indicator.percentage | number:'1.0-0' }}%
+                </span>
+                <span class="bar-percentage no-data-text" *ngIf="indicator.answeredCount === 0">
+                  Sem dados
+                </span>
+              </div>
+
+              <mat-chip
+                [style.background-color]="indicator.answeredCount > 0 ? 'rgba(102, 126, 234, 0.1)' : 'rgba(0, 0, 0, 0.05)'"
+                [style.color]="indicator.answeredCount > 0 ? '#667eea' : '#999'"
+                class="performance-chip">
+                {{ indicator.answeredCount > 0 ? getPerformanceLabel(indicator.percentage) : 'Sem dados' }}
+              </mat-chip>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Ranking dos Tópicos -->
+    <mat-card class="ranking-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>emoji_events</mat-icon>
+          Ranking de Tópicos
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="ranking-list">
+          <div
+            *ngFor="let indicator of sortedIndicators; let i = index"
+            class="ranking-item"
+            [class.first-place]="i === 0 && indicator.answeredCount > 0"
+            [class.no-data]="indicator.answeredCount === 0">
+
+            <div class="rank-position">
+              <mat-icon *ngIf="i === 0 && indicator.answeredCount > 0">
+                emoji_events
+              </mat-icon>
+              <span *ngIf="i !== 0 || indicator.answeredCount === 0">
+                {{ i + 1 }}º
+              </span>
+            </div>
+
+            <div class="rank-content">
+              <h3>{{ indicator.indicatorTag }}</h3>
+              <div class="rank-progress">
+                <mat-progress-bar
+                  mode="determinate"
+                  [value]="indicator.percentage"
+                  [color]="indicator.percentage >= 60 ? 'primary' : 'warn'">
+                </mat-progress-bar>
+              </div>
+            </div>
+
+            <div class="rank-stats">
+              <span class="rank-percentage" *ngIf="indicator.answeredCount > 0">
+                {{ indicator.percentage | number:'1.0-0' }}%
+              </span>
+              <span class="rank-percentage no-data-text" *ngIf="indicator.answeredCount === 0">
+                -
+              </span>
+              <span class="rank-count">
+                {{ indicator.correctCount }}/{{ indicator.answeredCount }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </ng-container>
+</div>

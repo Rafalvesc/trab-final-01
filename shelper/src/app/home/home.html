@@ -1,0 +1,77 @@
+<mat-toolbar class="top-toolbar">
+  <span class="app-title">Studygen!</span>
+  <span class="spacer"></span>
+  <span class="user-welcome">Boas-vindas de volta!</span> </mat-toolbar>
+
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav mode="side" opened class="sidenav">
+    <div class="sidenav-header">
+      <mat-icon class="sidenav-icon">school</mat-icon>
+      <h2>Menu</h2>
+    </div>
+
+    <mat-nav-list>
+      <mat-list-item (click)="onNewStudyflow()" class="menu-item">
+        <mat-icon matListItemIcon>add_circle</mat-icon>
+        <span matListItemTitle>Novo Studyflow</span> </mat-list-item>
+
+      <mat-list-item (click)="onAnalytics()" class="menu-item">
+        <mat-icon matListItemIcon>analytics</mat-icon>
+        <span matListItemTitle>Análises</span> </mat-list-item>
+
+      <mat-list-item (click)="onConfiguration()" class="menu-item">
+        <mat-icon matListItemIcon>settings</mat-icon>
+        <span matListItemTitle>Configurações</span> </mat-list-item>
+
+      <mat-divider></mat-divider>
+
+      <mat-list-item (click)="onLogout()" class="menu-item logout-item">
+        <mat-icon matListItemIcon>logout</mat-icon>
+        <span matListItemTitle>Sair</span> </mat-list-item>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="main-content">
+    <div class="content-wrapper">
+      <div class="page-header">
+        <h1>Meus Studyflows</h1> <p class="subtitle">Gerencie sua jornada de aprendizado</p> </div>
+
+      <div class="studyflows-grid" *ngIf="studyflows.length > 0">
+        <mat-card
+          *ngFor="let studyflow of studyflows"
+          class="studyflow-card"
+          (click)="this.openStudyflow(studyflow.id)">
+          <mat-card-header>
+            <mat-card-title>{{ studyflow.title }}</mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content>
+            <p class="description">{{ studyflow.description }}</p>
+
+            <div class="tags-container">
+              <mat-chip-set>
+                <mat-chip *ngFor="let tag of getFirstThreeTags(studyflow.tags)">
+                  {{ tag }}
+                </mat-chip>
+              </mat-chip-set>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions>
+            <span class="created-date">
+              <mat-icon>schedule</mat-icon>
+              {{ studyflow.createdAt | date: 'MMM d, y' }}
+            </span>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <div class="empty-state" *ngIf="studyflows.length === 0">
+        <mat-icon>menu_book</mat-icon>
+        <h2>Nenhum Study Flow cadastrado</h2> <p>Crie seu primeiro studyflow para começar a aprender!</p> <button mat-raised-button color="primary" (click)="onNewStudyflow()">
+        <mat-icon>add</mat-icon>
+        Criar Studyflow </button>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
