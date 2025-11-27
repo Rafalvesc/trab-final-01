@@ -1,0 +1,105 @@
+=== FILE: document.pdf ===
+
+MTM224 – MÉTODOS NUMÉRICOS COMPUTACIONAIS
+Prof. Marcelo – sala 1225-B / e-mail: marcelo.yutaka@  gmail  .br  
+Objetivos: Analisar, interpretar e aplicar os métodos numéricos na solução, via computador, de equações e sistemas de equações lineares e 
+não-lineares. 
+
+UNIDADE 1 - ESTUDO SOBRE ERROS 
+
+1.1 - Conceitos básicos.
+
+1.2 - Erros nas aproximações numéricas.
+
+1.3 - Classificação de erros: absolutos, relativos, 
+arredondamento.
+
+1.4 - Erro nas funções de uma ou mais variáveis.
+
+1.5 - Determinação de erros através do computador. 
+
+UNIDADE 2 - ZEROS DE FUNÇÕES 
+2.1 - Conceitos básicos.
+2.2 - Localização de zeros.
+2.3 - Método de bisseção e erros.
+2.4 - Estudo do método iterativo e erros.
+2.5 - Método de Newton-Raphson e erros.
+2.6 - Estudo de zeros com precisão prefixada.
+2.7 - Determinações de zeros de funções através do 
+computador. 
+
+UNIDADE 3 - ZEROS DE POLINÔMIOS 
+3.1 - Conceitos fundamentais.
+3.2 - Teorema sobre o valor numérico de um polinômio. 
+3.3 - Teorema sobre o valor numérico da derivada de um 
+polinômio.
+3.4 - Delimitação de zeros reais e complexos.
+3.5 - Métodos de Birge-Vieta e erros.
+3.6 - Determinaçào de zeros de polinômios através do 
+computador. 
+
+UNIDADE 4 - APROXIMAÇÕES DE FUNÇÕES 
+4.1 - Conceitos fundamentais.
+4.2 - Métodos dos mínimos quadrados.
+4.3 - Funções ortogonais.
+4.4 - Análise harmônica.
+4.5 - Aproximações de funções através do computador. 
+
+UNIDADE 5 - INTERPOLAÇÃO 
+5.1 - Conceitos fundamentais.
+5.2 - Método de Lagrange e erros.
+5.3 - Estudo das diferenças finitas.
+5.4 - Fórmula geral de Newton com diferenças divididas. 
+5.5 - Fórmula de Newton com intervalos eqüidistantes.
+5.6 - Interpolação através do computador. 
+
+UNIDADE 6 - INTEGRAÇÃO NUMÉRICA 
+6.1 - Conceitos fundamentais.
+6.2 - Método de Newton-Cotes.
+6.3 - Regra dos trapézios.
+6.4 - Regra de Simpson e erros.
+6.5 - Integração numérica através do computador. 
+
+UNIDADE 7 - SISTEMAS LINEARES 
+7.1 - Conceitos fundamentais.
+7.2 - Método de eliminação de Gauss.
+7.3 - Condensação pivotal.
+7.4 - Refinamento de soluções.
+7.5 - Método por inversão de matrizes.
+7.6 - Métodos iterativos: Jacobi, Gauss, Seidel.
+7.7 - Estudo da convergência, análise dos erros.
+7.8 - Resolução de sistemas lineares através do 
+computador. 
+
+BIBLIOGRAFIA BÁSICA
+PRESS, W. H. Numerical Recipes in
+FORTRAN: the Art of Scientific Computing.
+Cambridge: University Press, 1988.
+BIBLIOGRAFIA COMPLEMENTAR
+BURDEN, R. L.; FAIRES, J. D. Numerical
+analysis. New York: PWS-KENT, 1989.
+HUMES, A. F. et al. Noções de cálculo
+numérico. São Paulo: McGraw-Hill, 1984.
+RUGGIERO, M. A. G.; LOPES, V. L. Cálculo
+numérico: aspectos teóricos e computacionais.
+São Paulo: Makron Books, 1996.
+
+AULAS: PRÉDIO 16-A
+                SALA: 10
+
+  OBSERVAÇÕES  
+É EXPRESSAMENTE PROIBIDO O USO DE 
+CELULAR DURANTE A AULA;
+
+AVALIAÇÕES:
+Primeira Avaliação: 14/10 – Conteúdos: Unidades 1,2,4,7
+Segunda Avaliação: 02/12 – Conteúdos: Unidades 5 e 6
+
+EXAME FINAL: 09/12 – CONTEÚDO DO SEMESTRE INTEIRO
+
+mailto:marcelo.yutaka@ufsm.br
+mailto:marcelo.yutaka@ufsm.br
+mailto:marcelo.yutaka@ufsm.br
+
+
+
