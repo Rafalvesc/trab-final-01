@@ -28,6 +28,7 @@
     </scm>
     <properties>
         <sonar.organization>rafalvesc</sonar.organization>
+        <sonar.projectKey>Rafalvesc_trab-final-01</sonar.projectKey>
         <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
