@@ -1,11 +1,10 @@
 package com.studybuddy.Service.Extractor;
 
+import com.studybuddy.Entity.IndicatorEntity;
+import com.studybuddy.Entity.StudyflowEntity;
 import com.studybuddy.Exception.GenericException;
 import com.studybuddy.Repository.Studyflow.Indicator.IndicatorEntityRepository;
 import com.studybuddy.Repository.Studyflow.Resource.ResourceEntityRepository;
-import com.studybuddy.entity.IndicatorEntity;
-import com.studybuddy.entity.ResourceEntity;
-import com.studybuddy.entity.StudyflowEntity;
 import com.studybuddy.Repository.Studyflow.StudyflowEntityRepository;
 import jakarta.transaction.Transactional;
 import org.apache.tika.Tika;
@@ -18,11 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import com.studybuddy.entity.ResourceEntity;
 
 @Service
 public class ExtractTextFromResources {
-    private static final String FILE_MARKER = "=== FILE: ";
-
     private final ResourceEntityRepository resourceEntityRepository;
     private final StudyflowEntityRepository studyflowEntityRepository;
     private final IndicatorEntityRepository indicatorEntityRepository;
@@ -33,6 +31,7 @@ public class ExtractTextFromResources {
         this.indicatorEntityRepository = indicatorEntityRepository;
     }
 
+    //esses metodos tao duplicados, mudar dps
     @Transactional
     public List<String> getTextFromAllResources(UUID studyflowId){
         Tika tika = new Tika();
@@ -58,10 +57,10 @@ public class ExtractTextFromResources {
                 Metadata metadata = new Metadata();
                 String text = tika.parseToString(stream, metadata);
 
-                allText.append(FILE_MARKER).append(resourceEntity.getFilename()).append(" ===\n");
+                allText.append("=== FILE: ").append(resourceEntity.getFilename()).append(" ===\n");
                 allText.append(text).append("\n\n");
             } catch (Exception e) {
-                allText.append(FILE_MARKER).append(resourceEntity.getFilename())
+                allText.append("=== FILE: ").append(resourceEntity.getFilename())
                         .append(" (FAILED TO PARSE) ===\n\n");
                 e.printStackTrace();
             }
@@ -86,10 +85,10 @@ public class ExtractTextFromResources {
             Metadata metadata = new Metadata();
             String text = tika.parseToString(stream, metadata);
 
-            resourceText.append(FILE_MARKER).append(indicator.getFilename()).append(" ===\n");
+            resourceText.append("=== FILE: ").append(indicator.getFilename()).append(" ===\n");
             resourceText.append(text).append("\n\n");
         } catch (Exception e) {
-            resourceText.append(FILE_MARKER).append(indicator.getFilename())
+            resourceText.append("=== FILE: ").append(indicator.getFilename())
                     .append(" (FAILED TO PARSE) ===\n\n");
             e.printStackTrace();
         }

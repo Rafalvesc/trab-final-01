@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.studybuddy.Exception.AiProviderException;
 import com.studybuddy.Repository.Studyflow.Resource.ResourceEntityRepository;
+import com.studybuddy.entity.ResourceEntity;
 import com.studybuddy.Exception.ResourceProcessingException;
 import com.studybuddy.Service.AI.AiChatClient;
 import com.studybuddy.Service.AI.Strategy.OverviewFromResourcesPromptStrategy;
@@ -12,8 +13,6 @@ import com.studybuddy.Service.AI.Strategy.PromptStrategy;
 import com.studybuddy.Service.AI.Template.AbstractAiGenerationService;
 import com.studybuddy.Service.Extractor.ExtractTextFromResources;
 import com.studybuddy.Service.Studyflow.Resource.GetResourceService;
-import com.studybuddy.entity.ResourceEntity;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -34,10 +33,8 @@ import java.util.UUID;
 @Service
 public class GenerateOverviewServiceImpl extends AbstractAiGenerationService<String> implements GenerateOverviewService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GenerateOverviewServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(GenerateOverviewServiceImpl.class);
 
-    private static final String MARKDOWN_FIELD = "markdown";
-    
     private static final String OVERVIEW_FILENAME = "ZPECIAL_FILE_PERZIZTED_MARKDOWN_2340UE9EH90";
 
     private final GetResourceService resourceService;
@@ -60,7 +57,8 @@ public class GenerateOverviewServiceImpl extends AbstractAiGenerationService<Str
 
     @Override
     protected PromptContext gatherContext(UUID studyflowId) {
-        LOGGER.debug("Gathering context for overview generation, studyflow: {}", studyflowId);
+        log.debug("Gathering context for overview generation, studyflow: {}", studyflowId);
+
         List<String> resourceContents = extractTextFromResources.getTextFromAllResources(studyflowId);
         List<String> indicatorTags = extractTextFromResources.getProcessedIndicatorTags(studyflowId);
 
@@ -77,20 +75,19 @@ public class GenerateOverviewServiceImpl extends AbstractAiGenerationService<Str
 
     @Override
     protected JsonNode parseResponse(String content) {
-        LOGGER.debug("Received markdown overview, length: {}", content.length());
+        log.debug("Received markdown overview, length: {}", content.length());
         ObjectNode node = objectMapper.createObjectNode();
-        
-        node.put(MARKDOWN_FIELD, content.trim());
+        node.put("markdown", content.trim());
         return node;
     }
 
     @Override
     protected String mapResponseToData(JsonNode parsedContent) {
-        if (parsedContent == null || !parsedContent.has(MARKDOWN_FIELD)) {
+        if (parsedContent == null || !parsedContent.has("markdown")) {
             throw new AiProviderException("Parsed content missing markdown field");
         }
 
-        String markdown = parsedContent.get(MARKDOWN_FIELD).asText();
+        String markdown = parsedContent.get("markdown").asText();
         if (!StringUtils.hasText(markdown)) {
             throw new ResourceProcessingException("Empty markdown response from AI");
         }
@@ -114,7 +111,7 @@ public class GenerateOverviewServiceImpl extends AbstractAiGenerationService<Str
         resourceEntity.setSizeBytes(bytes.length);
         resourceEntityRepository.save(resourceEntity);
 
-       LOGGER.info("Persisted overview resource for studyflow {} (filename={})", studyflowId, OVERVIEW_FILENAME);
+        log.info("Persisted overview resource for studyflow {} (filename={})", studyflowId, OVERVIEW_FILENAME);
     }
 
     @Override
@@ -126,11 +123,11 @@ public class GenerateOverviewServiceImpl extends AbstractAiGenerationService<Str
     private byte[] generateAndReturnPdf(UUID studyflowId) {
         Optional<ResourceEntity> maybe = resourceEntityRepository.findByStudyFlowIdAndFilename(studyflowId, OVERVIEW_FILENAME);
         if (maybe.isPresent()) {
-            LOGGER.info("Overview already exists for studyflow {} — skipping AI call", studyflowId);
+            log.info("Overview already exists for studyflow {} — skipping AI call", studyflowId);
             return markdownResourceToPdf(maybe.get());
         }
 
-        LOGGER.info("Overview not found for studyflow {} — invoking AI generation", studyflowId);
+        log.info("Overview not found for studyflow {} — invoking AI generation", studyflowId);
         super.generate(studyflowId);
 
         ResourceEntity generated = resourceEntityRepository.findByStudyFlowIdAndFilename(studyflowId, OVERVIEW_FILENAME)
@@ -181,7 +178,7 @@ public class GenerateOverviewServiceImpl extends AbstractAiGenerationService<Str
             }
 
         } catch (Exception e) {
-            LOGGER.error("Failed to convert markdown resource to PDF", e);
+            log.error("Failed to convert markdown resource to PDF", e);
             throw new ResourceProcessingException("Failed to convert markdown to PDF", e);
         }
     }

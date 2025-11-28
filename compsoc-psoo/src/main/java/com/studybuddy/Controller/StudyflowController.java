@@ -1,5 +1,6 @@
 package com.studybuddy.Controller;
 
+
 import com.studybuddy.Dto.Studyflow.*;
 import com.studybuddy.Dto.Studyflow.Question.QuestionGetDto;
 import com.studybuddy.Dto.Studyflow.Question.QuestionPostDto;
@@ -21,9 +22,6 @@ import java.util.UUID;
 @RequestMapping("api/studyflow")
 @CrossOrigin(origins = "http://localhost:4200")
 public class StudyflowController {
-
-    private static final String ERROR_PREFIX = "erro: ";
-
     private final StudyflowCreatorService studyflowCreatorService;
     private final GetQuestionsByStudyflowId getQuestionsByStudyflowId;
     private final PostAnswerService postAnswerService;
@@ -37,6 +35,7 @@ public class StudyflowController {
     private final GenerateOverviewService generateOverviewService;
 
     public record ApiResponse<T>(String message, T data) {}
+
 
     public StudyflowController(StudyflowCreatorService studyflowCreatorService, GetQuestionsByStudyflowId getQuestionsByStudyflowId, PostAnswerService postAnswerService, GenerateIndicatorService generateIndicatorService, GetAllStudyflows getAllStudyflows, GenerateQuestionsService generateQuestionsService, StudyflowPatchService studyflowPatchService, AccumulateTimeService accumulateTimeService, GetStudyflowStatus getStudyflowStatus, GetStudyflowService getStudyflowService, GenerateOverviewService generateOverviewService) {
         this.studyflowCreatorService = studyflowCreatorService;
@@ -102,7 +101,7 @@ public class StudyflowController {
             return ResponseEntity.status(HttpStatus.OK).body("Respondido");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ERROR_PREFIX + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("erro: " + e.getMessage());
         }
     }
 
@@ -113,7 +112,7 @@ public class StudyflowController {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new ApiResponse<>("Studyflow criado com sucesso", studyflowId));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ERROR_PREFIX + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("erro: " + e.getMessage());
         }
     }
 
@@ -123,7 +122,7 @@ public class StudyflowController {
             studyflowPatchService.patch(studyflowPatchDto);
             return  ResponseEntity.status(HttpStatus.OK).body("Patched");
         } catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ERROR_PREFIX + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("erro: " + e.getMessage());
         }
     }
 
@@ -146,7 +145,7 @@ public class StudyflowController {
                     .body(new ApiResponse<>("Questoes geradas", studyflowId));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ERROR_PREFIX + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("erro: " + e.getMessage());
         }
     }
 
