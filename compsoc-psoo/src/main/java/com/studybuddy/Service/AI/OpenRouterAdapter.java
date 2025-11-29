@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studybuddy.Exception.AiProviderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -28,11 +27,10 @@ public class OpenRouterAdapter implements AiChatClient {
     private final ObjectMapper objectMapper;
     private final String apiKey;
 
-    public OpenRouterAdapter(@Value("${openrouter.api.key}") String apiKey) {
+    public OpenRouterAdapter() {
         this.httpClient = HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper();
-        this.apiKey = apiKey;
-
+        this.apiKey = "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";
         if (this.apiKey == null || this.apiKey.isBlank()) {
             throw new IllegalStateException("OPENROUTER_API_KEY environment variable is not set");
         }
