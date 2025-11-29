@@ -1,4 +1,4 @@
-package com.studybuddy.Entity;
+package com.studybuddy.entity;
 
 import jakarta.persistence.*;
 import java.time.Instant;
