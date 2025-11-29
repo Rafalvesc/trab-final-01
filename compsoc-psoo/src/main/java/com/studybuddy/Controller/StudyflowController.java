@@ -34,6 +34,8 @@ public class StudyflowController {
     private final GetStudyflowService getStudyflowService;
     private final GenerateOverviewService generateOverviewService;
 
+    private static final String ERROR_PREFIX = "erro: ";
+
     public record ApiResponse<T>(String message, T data) {}
 
 
@@ -101,7 +103,7 @@ public class StudyflowController {
             return ResponseEntity.status(HttpStatus.OK).body("Respondido");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("erro: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ERROR_PREFIX + e.getMessage());
         }
     }
 
@@ -112,7 +114,7 @@ public class StudyflowController {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new ApiResponse<>("Studyflow criado com sucesso", studyflowId));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("erro: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ERROR_PREFIX + e.getMessage());
         }
     }
 
@@ -122,7 +124,7 @@ public class StudyflowController {
             studyflowPatchService.patch(studyflowPatchDto);
             return  ResponseEntity.status(HttpStatus.OK).body("Patched");
         } catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("erro: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ERROR_PREFIX + e.getMessage());
         }
     }
 
@@ -145,7 +147,7 @@ public class StudyflowController {
                     .body(new ApiResponse<>("Questoes geradas", studyflowId));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("erro: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ERROR_PREFIX + e.getMessage());
         }
     }
 

@@ -33,9 +33,9 @@ import java.util.UUID;
 @Service
 public class GenerateOverviewServiceImpl extends AbstractAiGenerationService<String> implements GenerateOverviewService {
 
-    private final Logger log = LoggerFactory.getLogger(GenerateOverviewServiceImpl.class);
-
     private static final String OVERVIEW_FILENAME = "ZPECIAL_FILE_PERZIZTED_MARKDOWN_2340UE9EH90";
+
+    private static final String MARKDOWN_FIELD = "markdown";
 
     private final GetResourceService resourceService;
     private final PromptStrategy overviewStrategy;
@@ -77,17 +77,17 @@ public class GenerateOverviewServiceImpl extends AbstractAiGenerationService<Str
     protected JsonNode parseResponse(String content) {
         log.debug("Received markdown overview, length: {}", content.length());
         ObjectNode node = objectMapper.createObjectNode();
-        node.put("markdown", content.trim());
+        node.put(MARKDOWN_FIELD, content.trim());
         return node;
     }
 
     @Override
     protected String mapResponseToData(JsonNode parsedContent) {
-        if (parsedContent == null || !parsedContent.has("markdown")) {
+        if (parsedContent == null || !parsedContent.has(MARKDOWN_FIELD)) {
             throw new AiProviderException("Parsed content missing markdown field");
         }
 
-        String markdown = parsedContent.get("markdown").asText();
+        String markdown = parsedContent.get(MARKDOWN_FIELD).asText();
         if (!StringUtils.hasText(markdown)) {
             throw new ResourceProcessingException("Empty markdown response from AI");
         }

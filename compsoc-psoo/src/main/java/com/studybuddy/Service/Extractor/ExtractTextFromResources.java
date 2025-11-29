@@ -17,35 +17,48 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 import com.studybuddy.entity.ResourceEntity;
 
 @Service
 public class ExtractTextFromResources {
+
+    private static final String FILE_HEADER = "=== FILE: ";
+    private static final String FILE_END = " ===\n";
+    private static final String FILE_FAILED = " (FAILED TO PARSE) ===\n\n";
+
     private final ResourceEntityRepository resourceEntityRepository;
     private final StudyflowEntityRepository studyflowEntityRepository;
     private final IndicatorEntityRepository indicatorEntityRepository;
 
-    ExtractTextFromResources(ResourceEntityRepository resourceEntityRepository, StudyflowEntityRepository studyflowEntityRepository, IndicatorEntityRepository indicatorEntityRepository) {
+    ExtractTextFromResources(ResourceEntityRepository resourceEntityRepository,
+                             StudyflowEntityRepository studyflowEntityRepository,
+                             IndicatorEntityRepository indicatorEntityRepository) {
+
         this.resourceEntityRepository = resourceEntityRepository;
         this.studyflowEntityRepository = studyflowEntityRepository;
         this.indicatorEntityRepository = indicatorEntityRepository;
     }
 
-    //esses metodos tao duplicados, mudar dps
     @Transactional
-    public List<String> getTextFromAllResources(UUID studyflowId){
+    public List<String> getTextFromAllResources(UUID studyflowId) {
         Tika tika = new Tika();
 
         List<String> resourceText = new ArrayList<>();
         StringBuilder allText = new StringBuilder();
-        List<ResourceEntity> resourceEntityList = new ArrayList<>(resourceEntityRepository.findAllByStudyFlowId(studyflowId));
+
+        List<ResourceEntity> resourceEntityList =
+                new ArrayList<>(resourceEntityRepository.findAllByStudyFlowId(studyflowId));
+
         Optional<StudyflowEntity> studyflowEntityOptional = studyflowEntityRepository.findById(studyflowId);
 
-        if(studyflowEntityOptional.isEmpty()){
+        if (studyflowEntityOptional.isEmpty()) {
             throw new GenericException("studyflow nao encontreado");
         }
+
         StudyflowEntity studyflowEntity = studyflowEntityOptional.get();
 
+        // Remove o indicador da lista para não duplicar
         ResourceEntity indicator = studyflowEntity.getIndicator();
         if (indicator != null) {
             UUID indicatorId = indicator.getId();
@@ -57,53 +70,76 @@ public class ExtractTextFromResources {
                 Metadata metadata = new Metadata();
                 String text = tika.parseToString(stream, metadata);
 
-                allText.append("=== FILE: ").append(resourceEntity.getFilename()).append(" ===\n");
+                allText.append(FILE_HEADER)
+                       .append(resourceEntity.getFilename())
+                       .append(FILE_END);
+
                 allText.append(text).append("\n\n");
+
             } catch (Exception e) {
-                allText.append("=== FILE: ").append(resourceEntity.getFilename())
-                        .append(" (FAILED TO PARSE) ===\n\n");
+                allText.append(FILE_HEADER)
+                       .append(resourceEntity.getFilename())
+                       .append(FILE_FAILED);
+
                 e.printStackTrace();
             }
+
             resourceText.add(allText.toString());
         });
+
         return resourceText;
     }
 
-    public String getIndicatorText(UUID studyflowId){
+    public String getIndicatorText(UUID studyflowId) {
         Tika tika = new Tika();
         StringBuilder resourceText = new StringBuilder();
+
         Optional<StudyflowEntity> studyflowEntityOptional = studyflowEntityRepository.findById(studyflowId);
+
         ResourceEntity indicator;
-        if (studyflowEntityOptional.isPresent()){
+        if (studyflowEntityOptional.isPresent()) {
             indicator = studyflowEntityOptional.get().getIndicator();
-        }
-        else return null;
-        if (indicator == null){
+        } else {
             return null;
         }
+
+        if (indicator == null) {
+            return null;
+        }
+
         try (InputStream stream = new ByteArrayInputStream(indicator.getFileData())) {
             Metadata metadata = new Metadata();
             String text = tika.parseToString(stream, metadata);
 
-            resourceText.append("=== FILE: ").append(indicator.getFilename()).append(" ===\n");
+            resourceText.append(FILE_HEADER)
+                        .append(indicator.getFilename())
+                        .append(FILE_END);
+
             resourceText.append(text).append("\n\n");
+
         } catch (Exception e) {
-            resourceText.append("=== FILE: ").append(indicator.getFilename())
-                    .append(" (FAILED TO PARSE) ===\n\n");
+            resourceText.append(FILE_HEADER)
+                        .append(indicator.getFilename())
+                        .append(FILE_FAILED);
+
             e.printStackTrace();
         }
+
         return resourceText.toString();
     }
 
-    public List<String> getProcessedIndicatorTags(UUID studyflowId){
+    public List<String> getProcessedIndicatorTags(UUID studyflowId) {
         List<IndicatorEntity> indicatorEntityList = indicatorEntityRepository.findAllByStudyflowId(studyflowId);
-        if (indicatorEntityList.isEmpty()){
+
+        if (indicatorEntityList.isEmpty()) {
             throw new GenericException("tags indicadoras nao cadastradas");
         }
+
         List<String> indicatorTags = new ArrayList<>();
-        for (IndicatorEntity indicatorEntity : indicatorEntityList){
+        for (IndicatorEntity indicatorEntity : indicatorEntityList) {
             indicatorTags.add(indicatorEntity.getIndicatorTag());
         }
+
         return indicatorTags;
     }
 }
